@@ -17,22 +17,52 @@ export default class All extends Component {
     this.fetchFiles();
   }
   fetchFiles = async () => {
-    const { data } = await backend.get("/files");
-    this.setState({ files: data, loading: false });
+    try {
+      let response = await fetch("http://localhost:5001/files/", {
+        method: "GET",
+      });
+      if (response.ok) {
+        /* let data = await response.json(); */
+        const data = await response.json();
+        console.log(data);
+        this.setState({ files: data, loading: false });
+      } else {
+        alert("something went wrong :(");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    /*  const { data } = await backend.get("/files"); */
   };
   handleFileClick = () => {
     this.ref.current.click();
   };
   handleFileChange = async (e) => {
     const [file, ...rest] = e.target.files;
+    console.log(backend);
     const formData = new FormData();
-    formData.append("cover", file);
+    formData.append("file", file);
+
     try {
+      let response = await fetch("http://localhost:5001/files/", {
+        method: "POST",
+        body: formData,
+      });
+      if (response.ok) {
+        let data = await response.json();
+        console.log(data);
+      } else {
+        alert("something went wrong :(");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    /* try {
       await backend.post("/files", formData);
       this.fetchFiles();
     } catch (error) {
       console.log(error);
-    }
+    } */
   };
   handleFileDelete = async (id) => {
     try {
@@ -77,8 +107,8 @@ export default class All extends Component {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Title</th>
+                  <th>Current Name:</th>
+                  <th>Change Name:</th>
                   <th>Size</th>
                   <th></th>
                 </tr>
@@ -86,7 +116,7 @@ export default class All extends Component {
               <tbody>
                 {files.map((file) => (
                   <tr key={file.id}>
-                    <td></td>
+                    <td>{file.originalName}</td>
                     <td>
                       <input
                         onChange={this.changeTitle}
