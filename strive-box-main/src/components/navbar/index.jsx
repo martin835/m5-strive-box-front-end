@@ -6,7 +6,7 @@ export default class NavBar extends Component {
     return (
       <Navbar expand="lg">
         <Navbar.Brand style={{ fontWeight: "bold" }}>
-          {this.props.title}
+          {this.props.title} blabla
         </Navbar.Brand>
 
         <Nav className="mr-auto"></Nav>
